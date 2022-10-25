@@ -1,21 +1,67 @@
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import {fetchPhotos} from './js/fetchPhotos'
+// import { fetchPhotos } from './js/newsService'
+import { createImg } from './js/createImg';
+import NewsApiServise from './js/newsService';
 
+// import { onLoadMoreCreate } from './js/onLoadMore';
 
 const getEl = selector => document.querySelector(selector);
 getEl('button').classList.add('btnSubmit')
-getEl('.search-form').addEventListener('submit', onSubmitForm)
+getEl('.search-form').addEventListener('submit', onSubmitForm);
+getEl('.load-more').addEventListener('click', onLoadMore);
+
+const newsApiServise = new NewsApiServise();
 
 function onSubmitForm(e) {
     e.preventDefault()
-    const inputValue = e.target.searchQuery.value;
-    fetchPhotos(inputValue).then(createImg).catch(onError);
+    
+    newsApiServise.value = e.target.searchQuery.value;
+    newsApiServise.resetPage();
+    newsApiServise.fetchPhotos().then(createImg).catch(onError);
+
+    // fetchPhotos(inputValue).then(createImg).catch(onError);
 }
 
-function createImg(photos) { 
-    getEl('.gallery').innerHTML = templateFunction(photos.hits);
+function onLoadMore() {
+    newsApiServise.fetchPhotos().then(createImg).catch(onError);
+//   onLoadMoreCreate(inputValue).then(createImg).catch(onError);
 }
+
+
+
+// function createImg(photos) { 
+//     console.log(photos);
+//     const cards = photos.hits.map(
+//       ({
+//         webformatURL,
+//         largeImageURL,
+//         tags,
+//         likes,
+//         views,
+//         comments,
+//         downloads,
+//       }) => 
+//         `<div class="photo-card">
+//   <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+//   <div class="info">
+//     <p class="info-item">
+//       <b>Likes: ${likes}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Views: ${views}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Comments: ${comments}</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Downloads: ${downloads}</b>
+//     </p>
+//   </div>
+// </div>`
+//     );
+//     getEl('.gallery').innerHTML = cards;
+// }
 
 
 

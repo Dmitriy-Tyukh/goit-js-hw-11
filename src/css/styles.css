@@ -10,11 +10,12 @@ body {
   background-color: #fafafa;
   color: #212121;
   line-height: 1.5;
+  text-align: center;
 }
 img {
    display: block;
    max-width: 100%;
-   max-height: 90%;
+   max-height: 425px;
  }
 li {
    list-style: none;
@@ -44,7 +45,8 @@ input {
  .photo-card {
    border: 2px solid black;
    border-radius: 4px;
-   margin-bottom: 15px;
+   margin-bottom: 30px;
+   margin-left: 30px;
    background-color: rgb(248, 229, 229);
    max-width: 640px;
    padding: 0;
@@ -57,4 +59,22 @@ input {
     margin-bottom: 0;
     margin-top: 0;
     padding: 0;
+ }
+ .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10 150px;
+    margin: 0, auto;
+ }
+ .load-more {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color:aqua;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid magenta;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.4);
+    margin-bottom: 20px;
+
  }
