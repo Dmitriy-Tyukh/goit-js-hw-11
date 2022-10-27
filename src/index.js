@@ -1,82 +1,87 @@
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import { fetchPhotos } from './js/newsService'
 import { createImg } from './js/createImg';
 import NewsApiServise from './js/newsService';
-
-// import { onLoadMoreCreate } from './js/onLoadMore';
-
-const getEl = selector => document.querySelector(selector);
-getEl('button').classList.add('btnSubmit')
-getEl('.search-form').addEventListener('submit', onSubmitForm);
-getEl('.load-more').addEventListener('click', onLoadMore);
+import LoadMoreBtn from './js/loadMoreBtn';
 
 const newsApiServise = new NewsApiServise();
+const loadMoreBtn = new LoadMoreBtn({
+    selector: '.load-more',
+    hidden: true,
+});
+
+const getEl = selector => document.querySelector(selector);
+getEl('[type="submit"]').classList.add('btnSubmit');
+getEl('.search-form').addEventListener('submit', onSubmitForm);
+loadMoreBtn.refs.button.addEventListener('click', fetchCards);
 
 function onSubmitForm(e) {
     e.preventDefault()
-    
-    newsApiServise.value = e.target.searchQuery.value;
-    newsApiServise.resetPage();
-    newsApiServise.fetchPhotos().then(createImg).catch(onError);
-
-    // fetchPhotos(inputValue).then(createImg).catch(onError);
+    clearCardsContainer();
+    newsApiServise.value = e.target.searchQuery.value.trim();
+    fetchCards();
 }
 
-function onLoadMore() {
-    newsApiServise.fetchPhotos().then(createImg).catch(onError);
-//   onLoadMoreCreate(inputValue).then(createImg).catch(onError);
+async function fetchCards() {
+    if (!newsApiServise.value) {
+        onWarning();
+        return;
+    }
+    try {
+        loadMoreBtn.show();
+        loadMoreBtn.disable();
+        
+        const photos = await newsApiServise.fetchPhotos()
+        // if (photos.totalHits - photos.hits.length * newsApiServise.page < 0) {
+        //     loadMoreBtn.hide();
+        // }
+        // console.log(newsApiServise.page);
+        // console.log(photos.hits.length);
+        // console.log(photos.totalHits);
+
+        createImg(photos);
+        loadMoreBtn.enable();
+
+    }
+    catch (error) {
+        switch (error.type) {
+            case 400:
+                onWarningFinisf();
+                loadMoreBtn.hide();
+                break;
+
+            case 404:
+                throw Error(onError);
+                break;
+
+            default:
+                onError()
+        }
+    }
 }
 
-
-
-// function createImg(photos) { 
-//     console.log(photos);
-//     const cards = photos.hits.map(
-//       ({
-//         webformatURL,
-//         largeImageURL,
-//         tags,
-//         likes,
-//         views,
-//         comments,
-//         downloads,
-//       }) => 
-//         `<div class="photo-card">
-//   <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes: ${likes}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views: ${views}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments: ${comments}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads: ${downloads}</b>
-//     </p>
-//   </div>
-// </div>`
-//     );
-//     getEl('.gallery').innerHTML = cards;
+//        }
+       
+        // console.dir(e);
+        // console.log(e.name);
+        // console.log(e.stack);
+        // console.log(e.message);
+//     }
 // }
 
 
 
 
+const clearCardsContainer = () => {
+    getEl('.gallery').innerHTML = '';
+};
 
-// const onWarning = () => {
-//   Notify.info('Too many matches found. Please enter a more specific name', {
-//     timeout: 2000,
-//   });
-// };
+const onWarningFinisf = () => {
+    Notify.info('We\'re sorry, but you\'ve reached the end of search results.')};
+
+const onWarning = () => {
+  Notify.info('Too many matches found. Please enter a more specific name')};
 
 export const onError = () => {
-  Notify.failure(
-    'Sorry, there are no images matching your search query. Please try again.',{
-      timeout: 2000,
-    }
-  );
-};
+
+  Notify.failure('Sorry, there are no images matching your search query. Please try again.')};
