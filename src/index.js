@@ -4,6 +4,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { simpleLightbox } from './js/options';
 import { firstLoad, onWarningFinisf, onWarning, onError } from './js/notiflix-fn';
 import { createImg } from './js/createImg';
+import { smoothScroll } from'./js/scrolls';
 import NewsApiServise from './js/newsService';
 import LoadMoreBtn from './js/loadMoreBtn';
 export { fetchCards };
@@ -31,26 +32,26 @@ async function fetchCards() {
         onWarning();
     return;
     }
+    try {
     loadMoreBtn.show();
     loadMoreBtn.disable();
-        try {
-            const photos = await newsApiServise.fetchPhotos();
-        }
-        catch (error) {
-            if (error.name === 'SyntaxError') {
-                loadMoreBtn.hide();
-                onWarningFinisf();
-            } else {
-                onError();
-            }
-        }
-    createImg(photos);
+    const photos = await newsApiServise.fetchPhotos();
     simpleLightbox.refresh();
+    createImg(photos);
     smoothScroll();
+        if (newsApiServise.page === 1) {
+            firstLoad(photos.totalHits);
+        return;
+        }
     loadMoreBtn.enable();
-    if (newsApiServise.page === 1) {
-        firstLoad(photos.totalHits);
-    return;
+    }
+    catch (error) {
+        if (error.name === 'SyntaxError') {
+            loadMoreBtn.hide();
+            onWarningFinisf();
+        } else {
+            onError();
+        }
     }
 }
 

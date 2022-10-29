@@ -1,5 +1,5 @@
 import { fetchCards } from '../index'
-
+export { smoothScroll };
 // плавний скрол при загрузке страници
 function smoothScroll() {
   const { height: cardHeight } = document
