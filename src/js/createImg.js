@@ -3,37 +3,40 @@ export { createImg };
 const getEl = selector => document.querySelector(selector);
 
 function createImg(photos) {
-  const markupCards = photos.hits.map(
-    ({
-      webformatURL,
-      largeImageURL,
-      tags,
-      likes,
-      views,
-      comments,
-      downloads,
-    }) =>
-      `<ul class="articles js-articles-container">
-        <li>
-            <div class="photo-card">
-                <img src='${webformatURL}' alt="${tags}" loading="lazy" />
-                    <div class="info">
-                        <p class="info-item">
+    const markupCards = photos.hits
+      .map(
+        ({
+          webformatURL,
+          largeImageURL,
+          tags,
+          likes,
+          views,
+          comments,
+          downloads,
+        }) =>
+          ` <li class="gallery__item">
+            <div class="gallery__card">
+                <a class="gallery__link" href="${largeImageURL}">
+                    <img  class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" height='280' width='420'/>
+                </a>
+                    <div class="thumb">
+                        <p class="stat">
                             <b>Likes: ${likes}</b>
                         </p>
-                        <p class="info-item">
+                        <p class="stat">
                             <b>Views: ${views}</b>
                         </p>
-                        <p class="info-item">
+                        <p class="stat">
                             <b>Comments: ${comments}</b>
                         </p>
-                        <p class="info-item">
+                        <p class="stat">
                             <b>Downloads: ${downloads}</b>
                         </p>
                     </div>
-                </div>
-            </li>
-        </ul>`
-  );
-  getEl('.gallery').innerHTML += markupCards;
+            </div>
+        </li> `
+      )
+      .join('');
+
+    getEl('.gallery').innerHTML += markupCards;
 }
