@@ -8,7 +8,7 @@ import { smoothScroll } from'./js/scrolls';
 import NewsApiServise from './js/newsService';
 import LoadMoreBtn from './js/loadMoreBtn';
 export { fetchCards };
-
+    
 const newsApiServise = new NewsApiServise();
 const loadMoreBtn = new LoadMoreBtn({
   selector: '.load-more',
@@ -35,12 +35,13 @@ async function fetchCards() {
     try {
     loadMoreBtn.show();
     loadMoreBtn.disable();
-    const photos = await newsApiServise.fetchPhotos();
+        const photos = await newsApiServise.fetchPhotos();
+        console.log(photos);
     simpleLightbox.refresh();
     createImg(photos);
     smoothScroll();
         if (newsApiServise.page === 1) {
-            firstLoad(photos.totalHits);
+            firstLoad(photos.data);
         return;
         }
     loadMoreBtn.enable();
@@ -58,3 +59,4 @@ async function fetchCards() {
 const clearCardsContainer = () => {
   getEl('.gallery').innerHTML = '';
 };
+
